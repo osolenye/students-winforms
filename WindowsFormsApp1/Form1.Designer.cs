@@ -65,20 +65,21 @@ namespace WindowsFormsApp1
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
-
-
-            // Основные настройки формы
             this.Text = "Учёт оценок и посещаемости";
-            this.Font = new System.Drawing.Font("Segoe UI", 10);
-            this.Width = 800;
-            this.Height = 600;
+            this.Font = new System.Drawing.Font("Segoe UI", 10); // Современный шрифт по умолчанию
+            this.BackColor = System.Drawing.Color.FromArgb(240, 240, 240); // Светлый фон формы
+            this.Width = 850; // Немного увеличим ширину
+            this.Height = 650; // Немного увеличим высоту
 
             // TabControl
             tabControlMain = new TabControl { Dock = DockStyle.Fill };
-            tabGroups = new TabPage("Группы");
-            tabStudents = new TabPage("Учащиеся");
-            tabRecords = new TabPage("Оценки и посещаемость");
+            tabControlMain.Appearance = TabAppearance.FlatButtons; // Более современный вид вкладок
+            tabControlMain.BackColor = System.Drawing.Color.White;
+            tabControlMain.SelectedIndexChanged += tabControlMain_SelectedIndexChanged; // Для возможной стилизации активной вкладки
+
+            tabGroups = new TabPage("Группы") { BackColor = System.Drawing.Color.White };
+            tabStudents = new TabPage("Учащиеся") { BackColor = System.Drawing.Color.White };
+            tabRecords = new TabPage("Оценки и посещаемость") { BackColor = System.Drawing.Color.White };
 
             tabControlMain.TabPages.AddRange(new[] { tabGroups, tabStudents, tabRecords });
             this.Controls.Add(tabControlMain);
@@ -87,77 +88,164 @@ namespace WindowsFormsApp1
             InitializeStudentsTab();
             InitializeRecordsTab();
         }
+        private void InitializeGroupsTab()
+        {
+            // ListBox для групп
+            listBoxGroups = new ListBox
+            {
+                Width = 300,
+                Left = 20,
+                Top = 20,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left,
+                BorderStyle = BorderStyle.FixedSingle, // Улучшенная граница
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+
+            // TextBox для ввода названия группы
+            textBoxGroupName = new TextBox
+            {
+                Left = listBoxGroups.Right + 30,
+                Top = 20,
+                Width = 400,
+                Font = new System.Drawing.Font("Segoe UI", 10),
+                BorderStyle = BorderStyle.FixedSingle
+                //PlaceholderText = "Название новой группы"
+            };
+
+            // Кнопка "Добавить"
+            buttonAddGroup = new Button
+            {
+                Left = textBoxGroupName.Left,
+                Top = textBoxGroupName.Bottom + 15,
+                Width = 150,
+                Height = 35,
+                Text = "Добавить группу",
+                FlatStyle = FlatStyle.Flat, // Более плоский стиль
+                BackColor = System.Drawing.Color.FromArgb(70, 130, 180), // Приятный синий цвет
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 10),
+                Cursor = Cursors.Hand
+            };
+            buttonAddGroup.FlatAppearance.BorderSize = 0;
+            buttonAddGroup.Click += buttonAddGroup_Click;
+            buttonAddGroup.MouseEnter += (s, e) => buttonAddGroup.BackColor = System.Drawing.Color.FromArgb(50, 100, 150);
+            buttonAddGroup.MouseLeave += (s, e) => buttonAddGroup.BackColor = System.Drawing.Color.FromArgb(70, 130, 180);
+
+            // Кнопка "Удалить"
+            buttonDeleteGroup = new Button
+            {
+                Left = textBoxGroupName.Left,
+                Top = buttonAddGroup.Bottom + 10,
+                Width = 150,
+                Height = 35,
+                Text = "Удалить",
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.FromArgb(220, 53, 69), // Красный цвет для удаления
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 10),
+                Cursor = Cursors.Hand
+            };
+            buttonDeleteGroup.FlatAppearance.BorderSize = 0;
+            buttonDeleteGroup.Click += buttonDeleteGroup_Click;
+            buttonDeleteGroup.MouseEnter += (s, e) => buttonDeleteGroup.BackColor = System.Drawing.Color.FromArgb(180, 40, 55);
+            buttonDeleteGroup.MouseLeave += (s, e) => buttonDeleteGroup.BackColor = System.Drawing.Color.FromArgb(220, 53, 69);
+
+            // Добавляем элементы на вкладку
+            tabGroups.Controls.AddRange(new Control[]
+            {
+        listBoxGroups, textBoxGroupName, buttonAddGroup, buttonDeleteGroup
+            });
+        }
 
         private void InitializeRecordsTab()
         {
             // Группа
             comboBoxGroupForRecords = new ComboBox
             {
-                Left = 10,
-                Top = 10,
+                Left = 20,
+                Top = 20,
                 Width = 300,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new System.Drawing.Font("Segoe UI", 10),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.White,
+                //BorderStyle = BorderStyle.FixedSingle
             };
             comboBoxGroupForRecords.SelectedIndexChanged += comboBoxGroupForRecords_SelectedIndexChanged;
 
             // Учащийся
             comboBoxStudentForRecords = new ComboBox
             {
-                Left = comboBoxGroupForRecords.Right + 20,
-                Top = 10,
+                Left = comboBoxGroupForRecords.Right + 30,
+                Top = 20,
                 Width = 300,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new System.Drawing.Font("Segoe UI", 10),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.White,
+                //BorderStyle = BorderStyle.FixedSingle
             };
             comboBoxStudentForRecords.SelectedIndexChanged += comboBoxStudentForRecords_SelectedIndexChanged;
 
             // Оценка
             numericGrade = new NumericUpDown
             {
-                Left = 10,
-                Top = comboBoxGroupForRecords.Bottom + 10,
-                Width = 100,
+                Left = 20,
+                Top = comboBoxGroupForRecords.Bottom + 15,
+                Width = 120,
                 Minimum = 1,
-                Maximum = 5
+                Maximum = 5,
+                Font = new System.Drawing.Font("Segoe UI", 10),
+                BorderStyle = BorderStyle.FixedSingle
             };
 
             // Присутствие
             checkBoxPresent = new CheckBox
             {
-                Left = numericGrade.Right + 20,
-                Top = numericGrade.Top + 3,
-                Text = "Присутствовал"
+                Left = numericGrade.Right + 30,
+                Top = numericGrade.Top + 5,
+                Text = "Присутствовал",
+                Font = new System.Drawing.Font("Segoe UI", 10)
             };
 
             // Сохранить
             buttonSaveRecord = new Button
             {
-                Left = checkBoxPresent.Right + 20,
-                Top = numericGrade.Top - 2,
+                Left = checkBoxPresent.Right + 30,
+                Top = numericGrade.Top - 3,
                 Width = 150,
-                Text = "Сохранить запись"
+                Height = 35,
+                Text = "Сохранить",
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.FromArgb(46, 204, 113), // Зеленый цвет для сохранения
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 10),
+                Cursor = Cursors.Hand
             };
+            buttonSaveRecord.FlatAppearance.BorderSize = 0;
             buttonSaveRecord.Click += buttonSaveRecord_Click;
+            buttonSaveRecord.MouseEnter += (s, e) => buttonSaveRecord.BackColor = System.Drawing.Color.FromArgb(39, 174, 96);
+            buttonSaveRecord.MouseLeave += (s, e) => buttonSaveRecord.BackColor = System.Drawing.Color.FromArgb(46, 204, 113);
 
             // Таблица с записями
             dataGridRecords = new DataGridView
             {
-                Left = 10,
-                Top = numericGrade.Bottom + 20,
-                Width = 750,
-                Height = 350,
+                Left = 20,
+                Top = numericGrade.Bottom + 25,
+                Width = 800,
+                Height = 400,
                 ReadOnly = true,
                 AllowUserToAddRows = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new System.Drawing.Font("Segoe UI", 10)
             };
+            dataGridRecords.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(240, 240, 240);
+            dataGridRecords.EnableHeadersVisualStyles = false;
 
             tabRecords.Controls.AddRange(new Control[]
             {
-        comboBoxGroupForRecords,
-        comboBoxStudentForRecords,
-        numericGrade,
-        checkBoxPresent,
-        buttonSaveRecord,
-        dataGridRecords
+        comboBoxGroupForRecords, comboBoxStudentForRecords, numericGrade, checkBoxPresent, buttonSaveRecord, dataGridRecords
             });
 
             UpdateGroupComboBoxForRecords();
@@ -171,6 +259,17 @@ namespace WindowsFormsApp1
 
             if (comboBoxGroupForRecords.Items.Count > 0)
                 comboBoxGroupForRecords.SelectedIndex = 0;
+        }
+
+        private void tabControlMain_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Дополнительная стилизация активной вкладки при необходимости
+            // Например, изменение цвета фона активной вкладки
+            foreach (TabPage tabPage in tabControlMain.TabPages)
+            {
+                tabPage.BackColor = System.Drawing.Color.White;
+            }
+            tabControlMain.SelectedTab.BackColor = System.Drawing.Color.FromArgb(230, 230, 230);
         }
 
         private void comboBoxGroupForRecords_SelectedIndexChanged(object sender, EventArgs e)
@@ -241,28 +340,36 @@ namespace WindowsFormsApp1
             // ComboBox для выбора группы
             comboBoxGroupSelect = new ComboBox
             {
-                Left = 10,
-                Top = 10,
+                Left = 20,
+                Top = 20,
                 Width = 400,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new System.Drawing.Font("Segoe UI", 10),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.White,
+                //BorderStyle = BorderStyle.FixedSingle
             };
             comboBoxGroupSelect.SelectedIndexChanged += comboBoxGroupSelect_SelectedIndexChanged;
 
             // ListBox студентов
             listBoxStudents = new ListBox
             {
-                Left = 10,
-                Top = comboBoxGroupSelect.Bottom + 10,
+                Left = 20,
+                Top = comboBoxGroupSelect.Bottom + 15,
                 Width = 300,
-                Height = 400
+                Height = 400,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new System.Drawing.Font("Segoe UI", 10)
             };
 
             // TextBox для имени студента
             textBoxStudentName = new TextBox
             {
-                Left = listBoxStudents.Right + 20,
-                Top = comboBoxGroupSelect.Bottom + 10,
-                Width = 300,
+                Left = listBoxStudents.Right + 30,
+                Top = comboBoxGroupSelect.Bottom + 15,
+                Width = 400,
+                Font = new System.Drawing.Font("Segoe UI", 10),
+                BorderStyle = BorderStyle.FixedSingle
                 //PlaceholderText = "ФИО ученика"
             };
 
@@ -270,29 +377,43 @@ namespace WindowsFormsApp1
             buttonAddStudent = new Button
             {
                 Left = textBoxStudentName.Left,
-                Top = textBoxStudentName.Bottom + 10,
-                Width = 200,
-                Text = "Добавить ученика"
+                Top = textBoxStudentName.Bottom + 15,
+                Width = 150,
+                Height = 35,
+                Text = "Добавить ученика",
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.FromArgb(70, 130, 180),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 10),
+                Cursor = Cursors.Hand
             };
+            buttonAddStudent.FlatAppearance.BorderSize = 0;
             buttonAddStudent.Click += buttonAddStudent_Click;
+            buttonAddStudent.MouseEnter += (s, e) => buttonAddStudent.BackColor = System.Drawing.Color.FromArgb(50, 100, 150);
+            buttonAddStudent.MouseLeave += (s, e) => buttonAddStudent.BackColor = System.Drawing.Color.FromArgb(70, 130, 180);
 
             // Кнопка удалить
             buttonDeleteStudent = new Button
             {
                 Left = textBoxStudentName.Left,
                 Top = buttonAddStudent.Bottom + 10,
-                Width = 200,
-                Text = "Удалить выбранного"
+                Width = 150,
+                Height = 35,
+                Text = "Удалить",
+                FlatStyle = FlatStyle.Flat,
+                BackColor = System.Drawing.Color.FromArgb(220, 53, 69),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 10),
+                Cursor = Cursors.Hand
             };
+            buttonDeleteStudent.FlatAppearance.BorderSize = 0;
             buttonDeleteStudent.Click += buttonDeleteStudent_Click;
+            buttonDeleteStudent.MouseEnter += (s, e) => buttonDeleteStudent.BackColor = System.Drawing.Color.FromArgb(180, 40, 55);
+            buttonDeleteStudent.MouseLeave += (s, e) => buttonDeleteStudent.BackColor = System.Drawing.Color.FromArgb(220, 53, 69);
 
             tabStudents.Controls.AddRange(new Control[]
             {
-        comboBoxGroupSelect,
-        listBoxStudents,
-        textBoxStudentName,
-        buttonAddStudent,
-        buttonDeleteStudent
+        comboBoxGroupSelect, listBoxStudents, textBoxStudentName, buttonAddStudent, buttonDeleteStudent
             });
 
             UpdateGroupDropdown();
@@ -364,61 +485,6 @@ namespace WindowsFormsApp1
 
             UpdateGroupDropdown();
         }
-
-
-        private void InitializeGroupsTab()
-        {
-            // ListBox для групп
-            listBoxGroups = new ListBox
-            {
-                Width = 300,
-                Left = 10,
-                Top = 10,
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left
-            };
-
-            // TextBox для ввода названия группы
-            textBoxGroupName = new TextBox
-            {
-                Left = listBoxGroups.Right + 20,
-                Top = 10,
-                Width = 400,
-                //PlaceholderText = "Название новой группы"
-            };
-
-            // Кнопка "Добавить"
-            buttonAddGroup = new Button
-            {
-                Left = textBoxGroupName.Left,
-                Top = textBoxGroupName.Bottom + 10,
-                Width = 200,
-                Text = "Добавить группу"
-            };
-            buttonAddGroup.Click += buttonAddGroup_Click;
-
-            // Кнопка "Удалить"
-            buttonDeleteGroup = new Button
-            {
-                Left = textBoxGroupName.Left,
-                Top = buttonAddGroup.Bottom + 10,
-                Width = 200,
-                Text = "Удалить выбранную"
-            };
-            buttonDeleteGroup.Click += buttonDeleteGroup_Click;
-
-            // Добавляем элементы на вкладку
-            tabGroups.Controls.AddRange(new Control[]
-            {
-                listBoxGroups, textBoxGroupName, buttonAddGroup, buttonDeleteGroup
-            });
-        }
-
-        //private void UpdateGroupList()
-        //{
-        //    listBoxGroups.Items.Clear();
-        //    foreach (var group in dataManager.Groups)
-        //        listBoxGroups.Items.Add(group);
-        //}
 
         private void buttonAddGroup_Click(object sender, EventArgs e)
         {
